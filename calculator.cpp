@@ -7,21 +7,13 @@
 Calculator::Calculator()
     : m_calc({0,'+', 0, 0}), m_run(true)
 {
-    std::cout << "Calculator starting up..." << std::endl;
-    displayInfo();
-    displayCommands();
-    std::cout.precision(16);        //set precision to 16 decimal places max
-    calculate();                    //Run calculation program until [Q]uit is called
-}
-
-Calculator::~Calculator()
-{
-    system("clear");
-    std::cout << "Calculator shutting down..." << std::endl;
+    //calculate();                    //Run calculation program until [Q]uit is called
 }
 
 void Calculator::calculate()
 {
+    startUp();
+
     while(m_run == true)    //run calculations until [Q]uit is called
     {
         setAll();   //prompt user for n1, op, and n2 values
@@ -47,6 +39,8 @@ void Calculator::calculate()
         displayAnswer();                //display calc + ans on terminal
         m_history.push_back(m_calc);    //add calculation to history
     }
+
+    shutDown();
 }
 
 void Calculator::setAll()
@@ -158,4 +152,19 @@ void Calculator::displayInfo()
 void Calculator::displayCommands()
 {
     std::cout << "Commands: [Q]uit, [H]istory, [C]ommands" << std::endl;
+}
+
+void Calculator::startUp()
+{
+    std::cout << "Calculator starting up..." << std::endl;
+    displayInfo();
+    displayCommands();
+    m_run = true;                   //reset m_run if reusing calculator object
+    std::cout.precision(16);        //set precision to 16 decimal places max
+}
+
+void Calculator::shutDown()
+{
+    system("clear");
+    std::cout << "Calculator shutting down..." << std::endl;
 }

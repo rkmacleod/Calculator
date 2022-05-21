@@ -17,7 +17,6 @@ private:
     std::vector<Calculation> m_history;     //Dynamically allocated list of calculation history
     bool m_run;                             //flag to keep calculator while-loop
 
-    void calculate();                       //Main member function that runs until Calculator object is destroyed
     void setAll();                          //sets n1, op, and n2 by calling setNum and setOp functions
     void setNum(double&);                   //sets Calculation n1 or n2 values, only excepts numbers
     void setOp(char&);                      //sets Calculation operator value, only excepts ('+' || '-' || '*' || '/')
@@ -28,8 +27,10 @@ private:
     void displayLine() const;               //prints a long "------" line to terminal, used for visual visibility
     void displayInfo();                     //prints info about how calculator works
     void displayCommands();                 //prints list of commands
+    void startUp();
+    void shutDown();
 
 public:
     Calculator();
-    ~Calculator();
+    void calculate();                       //Main member function that runs until Calculator object is destroyed
 };
