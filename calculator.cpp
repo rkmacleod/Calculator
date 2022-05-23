@@ -1,16 +1,13 @@
 //Basic calculator in C++ that can perform addition, subtraction, multiplication, and division for ints and doubles
-#include "Calculator.hpp"   //Calculator class, Calculation struct
-#include <iostream>         //std::cout, std::cin
-#include <iomanip>          //std::setprecision
-#include <vector>           //std::vector, std::vector::push_back
+#include "Calculator.hpp"   //Calculator class, Calculation struct        
 
-Calculator::Calculator()
-    : m_calc({0,'+', 0, 0}), m_run(true)
+Calculator& Calculator::get()
 {
-    //calculate();                    //Run calculation program until [Q]uit is called
+    static Calculator s_Instance;
+    return s_Instance;
 }
 
-void Calculator::calculate()
+void Calculator::i_calculate()
 {
     startUp();
 
@@ -48,7 +45,7 @@ void Calculator::setAll()
     std::cout << "Enter first number: ";
     setNum(m_calc.n1);
 
-    listOperators();
+    displayOperators();
     std::cout << "Enter operation: ";
     setOp(m_calc.op);
 
@@ -78,14 +75,14 @@ void Calculator::setOp(char& op)
     do
     {
         std::cin >> op;
-        if((op == 'Q') || op == 'q')                            //if Q was entered, shut down calculator
+        if(std::toupper(op) == 'Q')                             //if Q was entered, shut down calculator
         {
             m_run = false;                                      //set run flag to false for calculate do-while-loop
             break;                                              //break out of setNum
         }
-        else if((op == 'H') || (op == 'h'))                     //if H was entered, display calculation history
+        else if(std::toupper(op) == 'H')                        //if H was entered, display calculation history
             displayHistory();
-        else if((op == 'C') || (op == 'c'))                     //if C was entered, display commands list
+        else if(std::toupper(op) == 'C')                        //if C was entered, display commands list
             displayCommands();
         else if(!(is_valid_op(op)))                             //check if op is an operator char (+,-,*,/)
         {
@@ -100,17 +97,17 @@ void Calculator::setOp(char& op)
     } while (true);  
 }
 
-void Calculator::listOperators()
-{
-    std::cout << "Addition: + | Subtraction: - | Multiplication: * | Division: /" << std::endl;
-}
-
 bool Calculator::is_valid_op(const char& ch)
 {
     return ch == '+'
         || ch == '-'
         || ch == '*'
         || ch == '/';
+}
+
+void Calculator::displayOperators()
+{
+    std::cout << "Addition: + | Subtraction: - | Multiplication: * | Division: /" << std::endl;
 }
 
 void Calculator::displayAnswer() const
@@ -144,12 +141,12 @@ void Calculator::displayLine() const
     std::cout << "--------------------------------------------" << std::endl;
 }
 
-void Calculator::displayInfo()
+void Calculator::displayInfo() const
 {
     std::cout << "Terminal controllable calculator that does (+,-,*,/) operations and holds a history of calculations" << std::endl;
 }
 
-void Calculator::displayCommands()
+void Calculator::displayCommands() const
 {
     std::cout << "Commands: [Q]uit, [H]istory, [C]ommands" << std::endl;
 }
@@ -165,6 +162,7 @@ void Calculator::startUp()
 
 void Calculator::shutDown()
 {
-    system("clear");
+    m_history.clear();      //clear Calculation vector history
+    system("clear");        //clear terminal
     std::cout << "Calculator shutting down..." << std::endl;
 }
