@@ -4,6 +4,7 @@
 #include <iomanip>          //std::setprecision
 #include <vector>           //std::vector, std::vector::push_back
 #include <cctype>           //std::toupper
+#include <string>           //std::string, std::string::strtod(), for setNum input commands
 
 struct Calculation
 {
@@ -23,17 +24,19 @@ public:
 private:
     Calculation m_calc;                     //Struct of current calculation, holding n1, op, and n2 values for calculating + ans for answer value
     std::vector<Calculation> m_history;     //vector of calculation history
-    inline static bool m_run;               //static flag to keep calculator while-loop running until [Q]uit
+    inline static bool s_run;               //static flag to keep calculator while-loop running until [Q]uit
     static Calculator s_Instance;           //Singleton instance used for Calculator
 
 private:
-    Calculator() = default;                 //Default constructor, should not be called since Calculator is a Singleton
+    Calculator() : m_calc({0,'+',0,0}) {};  //Default constructor, should not be called since Calculator is a Singleton, initialize m_calc Calculation struct
     void i_calculate();                     //Internal: Main member function that runs until Calculator object is destroyed
     void setAll();                          //sets n1, op, and n2 by calling setNum and setOp functions
     void setNum(double&);                   //sets Calculation n1 or n2 values, only excepts numbers
     void setOp(char&);                      //sets Calculation operator value, only excepts ('+' || '-' || '*' || '/')
+    bool is_valid_command(const char&);     //returns true if char is a command character: [Q]uit, [H]istory, or [C]ommands
     bool is_valid_op(const char&);          //returns true if char is an calculator operator ('+' || '-' || '*' || '/')
-    void displayOperators();                //Displays operators to be used in calculator
+    void command(const char&);              //Implements command corresponding to char parameter: [Q]uit, [H]istory, or [C]ommands
+    void displayOperators() const;          //Displays operators to be used in calculator
     void displayAnswer() const;             //Displays "n1 op n2 =" and the answer of the calculation
     void displayHistory() const;            //Displays previous calculations
     void displayLine() const;               //prints a long "------" line to terminal, used for visual visibility

@@ -11,9 +11,9 @@ void Calculator::i_calculate()
 {
     startUp();
 
-    while(m_run == true)    //run calculations until [Q]uit is called
+    while(s_run == true)    //run calculations until [Q]uit is called
     {
-        setAll();   //prompt user for n1, op, and n2 values
+        setAll();           //prompt user for n1, op, and n2 values
 
         switch(m_calc.op)
         {
@@ -33,8 +33,11 @@ void Calculator::i_calculate()
                 break; 
         }
 
-        displayAnswer();                //display calc + ans on terminal
-        m_history.push_back(m_calc);    //add calculation to history
+        if(s_run == true)
+        {
+            displayAnswer();                //display calc + ans on terminal
+            m_history.push_back(m_calc);    //add calculation to history
+        }
     }
 
     shutDown();
@@ -45,46 +48,63 @@ void Calculator::setAll()
     std::cout << "Enter first number: ";
     setNum(m_calc.n1);
 
-    displayOperators();
-    std::cout << "Enter operation: ";
-    setOp(m_calc.op);
+    if(s_run == true)
+    {
+        displayOperators();
+        std::cout << "Enter operation: ";
+        setOp(m_calc.op);
+    }
 
-    std::cout << "Enter second number: ";
-    setNum(m_calc.n2);
+    if(s_run == true)
+    {  
+        std::cout << "Enter second number: ";
+        setNum(m_calc.n2);
+    }
 }
 
 void Calculator::setNum(double& n)
 {
+    std::string input;      //string for testing if input is a double or char
+    char* c_ptr = nullptr;  //char pointer, will point to first char that cannot be converted to a double
+
     do
     {
-        if(!(std::cin >> n))
+        std::cin >> input;                              //get user input as a string
+        double d_test = strtod(input.c_str(), &c_ptr);  //test if string is a double by using strtod. If double, c_ptr == nullptr
+        if(*c_ptr == 0)                                 //if a double
+        {
+            n = d_test;     //set n to double
+            break;          //break do-while loop
+        }
+        else if(input.length() == 1)        //if string is only a char
+        {
+            if(is_valid_command(*c_ptr))    //if the char is a command
+            {
+                command(*c_ptr);            //implement command
+                if(s_run == false)          //if command was [Q]uit
+                    break;                  //break do-while loop
+            }
+        }
+        else    //Invalid input: not a double or a command char
         {
             std::cout << "Error: not a number" << std::endl;
             std::cin.clear();                                   //clears the error flag on cin
             std::cin.ignore(256, '\n');                         //skip to the next new line
         }
-        else break;                                             //break if n has been set to a number
 
         std::cout << "Enter number: ";                          //ask for new number
 
     } while (true);
 }
 
-void Calculator::setOp(char& op)
+void Calculator::setOp(char& ch)
 {
     do
     {
-        std::cin >> op;
-        if(std::toupper(op) == 'Q')                             //if Q was entered, shut down calculator
-        {
-            m_run = false;                                      //set run flag to false for calculate do-while-loop
-            break;                                              //break out of setNum
-        }
-        else if(std::toupper(op) == 'H')                        //if H was entered, display calculation history
-            displayHistory();
-        else if(std::toupper(op) == 'C')                        //if C was entered, display commands list
-            displayCommands();
-        else if(!(is_valid_op(op)))                             //check if op is an operator char (+,-,*,/)
+        std::cin >> ch;
+        if(is_valid_command(ch))        //check if char is a command
+            command(ch);                //if a command, implement command
+        else if(!(is_valid_op(ch)))                             //check if ch is an operator char (+,-,*,/)
         {
             std::cout << "Error: not an operator" << std::endl;
             std::cin.clear();                                   //clears the error flag on cin
@@ -97,6 +117,13 @@ void Calculator::setOp(char& op)
     } while (true);  
 }
 
+bool Calculator::is_valid_command(const char& ch)
+{
+    return (std::toupper(ch) == 'Q')
+        || (std::toupper(ch) == 'H')
+        || (std::toupper(ch) == 'C');
+}
+
 bool Calculator::is_valid_op(const char& ch)
 {
     return ch == '+'
@@ -105,7 +132,19 @@ bool Calculator::is_valid_op(const char& ch)
         || ch == '/';
 }
 
-void Calculator::displayOperators()
+void Calculator::command(const char& ch)
+{
+    if(std::toupper(ch) == 'Q')                             //if Q was entered, shut down calculator
+    {
+        s_run = false;                                      //set run flag to false for calculate do-while-loop
+    }
+    else if(std::toupper(ch) == 'H')                        //if H was entered, display calculation history
+        displayHistory();
+    else if(std::toupper(ch) == 'C')                        //if C was entered, display commands list
+        displayCommands();
+}
+
+void Calculator::displayOperators() const
 {
     std::cout << "Addition: + | Subtraction: - | Multiplication: * | Division: /" << std::endl;
 }
@@ -156,7 +195,7 @@ void Calculator::startUp()
     std::cout << "Calculator starting up..." << std::endl;
     displayInfo();
     displayCommands();
-    m_run = true;                   //reset m_run if reusing calculator object
+    s_run = true;                   //reset s_run if reusing calculator object
     std::cout.precision(16);        //set precision to 16 decimal places max
 }
 
