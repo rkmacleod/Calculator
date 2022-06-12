@@ -1,6 +1,5 @@
-//#ifndef CALCUI_H
-//#define CALCUI_H
-#pragma once
+#ifndef CALCUI_H
+#define CALCUI_H
 
 #include <iostream>         //std::cout
 #include <iomanip>          //std::setprecision
@@ -30,4 +29,4 @@ public:
     void clearScreen();                                     //clears the terminal using ANSI Escape sequences
 };
 
-//#endif // CALCUI_H
+#endif // CALCUI_H

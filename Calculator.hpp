@@ -1,6 +1,6 @@
-//#ifndef CALCULATOR_H
-//#define CALCULATOR_H
-#pragma once
+#ifndef CALCULATOR_H
+#define CALCULATOR_H
+
 
 #include <vector>           //std::vector, std::vector::push_back
 #include <string>           //std::string, std::string::strtod(), std::getline
@@ -32,4 +32,4 @@ private:
     void parseExpression(const std::string&);
 };
 
-//#endif //CALCULATOR_H
+#endif //CALCULATOR_H
